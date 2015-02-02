@@ -2,7 +2,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
 
-//#define VISUaLIZE
+//#define VISUALIZE
 
 int main(int argc, char *argv[])
 {
