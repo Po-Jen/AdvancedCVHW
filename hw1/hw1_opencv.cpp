@@ -15,10 +15,17 @@ int main(int argc, char *argv[])
 	cv::imshow("truck b", truckb);
 	cv::waitKey();
 #endif
+	/* Add black srroundings to truckb */
+	//search range = 50
 
 	/* Compute the motion vector by 16x16 Blocks*/
-	
-
+        //Extract all blocks from trucka and save the position of its center
+       
+        //Match the location for all blocks in truckb
+       
+      	//Calculate motion vector for all blocks
+      
+        //Draw motion vector field
 
 	return 0;
 }
