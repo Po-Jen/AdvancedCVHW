@@ -4,6 +4,13 @@
 
 //#define VISUALIZE
 
+struct block
+{
+	cv::Mat subImg;
+	int x;
+	int y;	
+};
+
 int main(int argc, char *argv[])
 {
 	/*Load two images*/
@@ -17,15 +24,17 @@ int main(int argc, char *argv[])
 #endif
 	/* Add black srroundings to truckb */
 	//search range = 50
+	
 
 	/* Compute the motion vector by 16x16 Blocks*/
-        //Extract all blocks from trucka and save the position of its center
+    //Extract all blocks from trucka and save the position of its center
+ 		
+
+    //Match the location for all blocks in truckb
        
-        //Match the location for all blocks in truckb
-       
-      	//Calculate motion vector for all blocks
+    //Calculate motion vector for all blocks
       
-        //Draw motion vector field
+    //Draw motion vector field
 
 	return 0;
 }
