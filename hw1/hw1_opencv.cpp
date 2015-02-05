@@ -1,6 +1,8 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
+#include <vector>
+#include <string>
 
 //#define VISUALIZE
 
@@ -24,9 +26,8 @@ int main(int argc, char *argv[])
 #endif
 
 	/* Add black srroundings to truckb */
-	//search range = 50
 	cv::Mat fatTruckb;
-	int searchRange = 51;
+	int searchRange = 51; //Now can only support odd serach range
 	int top, bottom, left, right;
 	top = bottom = left = right = (searchRange-1)/2;
 	copyMakeBorder( truckb, fatTruckb, top, bottom, left, right, cv::BORDER_CONSTANT, 0);
@@ -40,9 +41,46 @@ int main(int argc, char *argv[])
     //Extract all blocks from trucka and save the position of its center
  	int row = trucka.rows;
  	int col = trucka.cols;
+	int blockSize = 31;
+	int rowBlockNum = row/blockSize;
+	int colBlockNum = col/blockSize;
+	
+	std::vector<block> blocks;
+	block b;
+	cv::Mat tmpImg = cv::Mat::zeros(blockSize, blockSize, CV_8U);
+
+	for(int i=0; i<rowBlockNum; i++)
+	{
+		for(int j=0; j<colBlockNum; j++)
+		{
+			for(int blocki=i*blockSize; blocki<(i*blockSize)+blockSize; blocki++)
+			{
+				for(int blockj=j*blockSize; blockj<(j*blockSize)+blockSize; blockj++)
+				{
+					tmpImg.at<uchar>(blocki-(i*blockSize),blockj-(j*blockSize)) = trucka.at<uchar>(blocki, blockj); 	
+				}
+			}
+			b.subImg = tmpImg.clone();
+			b.x = i*blockSize + blockSize/2;
+			b.y = j*blockSize + blockSize/2;
+			blocks.push_back(b);
+		}
+	}
+
+#ifdef VISUALIZE
+	std::string s="block";
+	std::stringstream num;
+	for(int i=0; i<blocks.size(); i++)
+	{	
+		std::cout << blocks[i].x << " " << blocks[i].y << std::endl;
+		num << i;
+		cv::imshow(s+num.str(), blocks[i].subImg);
+	}
+	cv::waitKey();
+#endif
 
     //Match the location for all blocks in truckb
-       
+ 	   
     //Calculate motion vector for all blocks
       
     //Draw motion vector field
