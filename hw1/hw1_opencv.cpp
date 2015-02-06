@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	cv::waitKey();
 #endif 	
 
-	/* Compute the motion vector by 16x16 Blocks*/
+	/* Compute the motion vector by NxN Blocks*/
     //Extract all blocks from trucka and save the position of its center
  	int row = trucka.rows;
  	int col = trucka.cols;
