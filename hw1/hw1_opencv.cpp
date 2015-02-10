@@ -29,11 +29,12 @@ int main(int argc, char *argv[])
 	cv::Mat fatTruckb;
 	int searchRange = 51; //Now can only support odd serach range
 	int top, bottom, left, right;
-	top = bottom = left = right = (searchRange-1)/2;
+	top = bottom = left = right = searchRange-1;
 	copyMakeBorder( truckb, fatTruckb, top, bottom, left, right, cv::BORDER_CONSTANT, 0);
 
 #ifdef  VISUALIZE
 	cv::imshow("fat truck b", fatTruckb);
+	std::cout << top << " " << left << " " << bottom << " " << right << std::endl;
 	cv::waitKey();
 #endif 	
 
@@ -79,8 +80,17 @@ int main(int argc, char *argv[])
 	cv::waitKey();
 #endif
 
-    //Match the location for all blocks in truckb
- 	   
+    //Match the location for all blocks in fatTruckb
+	int start_x, start_y;
+	for(int index=0; index < blocks.size(); index++)
+	{
+		//get the center position of subImg in truckb
+		start_x = blocks[index].x+searchRange-1;
+		start_y = blocks[index].y+searchRange-1;
+
+
+	}	
+
     //Calculate motion vector for all blocks
       
     //Draw motion vector field
