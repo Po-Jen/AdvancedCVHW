@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stdlib.h>
 
 //#define VISUALIZE
 
@@ -14,6 +15,21 @@ struct block
 	int motion_x;
 	int motion_y;
 };
+
+double calculateDistance(const cv::Mat subImg, const cv::Mat testImg, const int blockSize)
+{
+	double distance=0;
+
+	for(int i=0; i<blockSize; i++)
+	{
+		for(int j=0; j<blockSize; j++)
+		{
+			distance += std::abs((int)subImg.at<uchar>(i,j)-(int)testImg.at<uchar>(i,j));
+		}
+	}
+
+	return distance;
+}
 
 int main(int argc, char *argv[])
 {
@@ -101,29 +117,26 @@ int main(int argc, char *argv[])
 				cv::Mat testImg = cv::Mat::zeros(blockSize, blockSize, CV_8U);
 				cv::Rect rect(searchX-(blockSize/2), searchY-(blockSize/2), blockSize, blockSize);
 				testImg = fatTruckb(rect);
-			
+
+#ifdef VISUALIZE	
 				std::string s="block";
 				std::stringstream num;
 				num << index;
 				cv::imshow(s+num.str(), blocks[index].subImg);
 				cv::imshow("testImg", testImg);
 				cv::waitKey();
-
+#endif
 
 				//Calculate the position that subImg mostly matches fatTruckb
-				/*
-				if(distance(blocks[index].subImg, testImg) < distance)
+				if(calculateDistance(blocks[index].subImg, testImg, blockSize) < distance)
 				{
 					blocks[index].motion_x = searchX;
 					blocks[index].motion_y = searchY;
 				}
-				*/
 			}
 		}
 	}	
 	
-	std::cout << blockSize/2 << std::endl;
-
     //Calculate motion vector for all blocks
       
     //Draw motion vector field
