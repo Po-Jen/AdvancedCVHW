@@ -9,8 +9,10 @@
 struct block
 {
 	cv::Mat subImg;
-	int x;
-	int y;	
+	int origin_x;
+	int origin_y;
+	int motion_x;
+	int motion_y;
 };
 
 int main(int argc, char *argv[])
@@ -62,8 +64,8 @@ int main(int argc, char *argv[])
 				}
 			}
 			b.subImg = tmpImg.clone();
-			b.x = i*blockSize + blockSize/2;
-			b.y = j*blockSize + blockSize/2;
+			b.origin_x = i*blockSize + blockSize/2;
+			b.origin_y = j*blockSize + blockSize/2;
 			blocks.push_back(b);
 		}
 	}
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
 	std::stringstream num;
 	for(int i=0; i<blocks.size(); i++)
 	{	
-		std::cout << blocks[i].x << " " << blocks[i].y << std::endl;
+		std::cout << blocks[i].origin_x << " " << blocks[i].origin_y << std::endl;
 		num << i;
 		cv::imshow(s+num.str(), blocks[i].subImg);
 	}
@@ -81,15 +83,46 @@ int main(int argc, char *argv[])
 #endif
 
     //Match the location for all blocks in fatTruckb
-	int start_x, start_y;
+	int fatb_x, fatb_y;
 	for(int index=0; index < blocks.size(); index++)
 	{
 		//get the center position of subImg in truckb
-		start_x = blocks[index].x+searchRange-1;
-		start_y = blocks[index].y+searchRange-1;
+		fatb_x = blocks[index].origin_x+searchRange-1;
+		fatb_y = blocks[index].origin_y+searchRange-1;
+
+		double distance = 1000000;
+		int halfRange = (searchRange-1)/2;
+
+		for(int searchX =fatb_x-halfRange; searchX < fatb_x+halfRange; searchX++)
+		{
+			for(int searchY =fatb_y-halfRange; searchY < fatb_y+halfRange; searchY++)
+			{
+				//Extract small area on fatTruckb for comparison
+				cv::Mat testImg = cv::Mat::zeros(blockSize, blockSize, CV_8U);
+				cv::Rect rect(searchX-(blockSize/2), searchY-(blockSize/2), blockSize, blockSize);
+				testImg = fatTruckb(rect);
+			
+				std::string s="block";
+				std::stringstream num;
+				num << index;
+				cv::imshow(s+num.str(), blocks[index].subImg);
+				cv::imshow("testImg", testImg);
+				cv::waitKey();
 
 
+				//Calculate the position that subImg mostly matches fatTruckb
+				/*
+				if(distance(blocks[index].subImg, testImg) < distance)
+				{
+					blocks[index].motion_x = searchX;
+					blocks[index].motion_y = searchY;
+				}
+				*/
+			}
+		}
 	}	
+	
+	std::cout << blockSize/2 << std::endl;
 
     //Calculate motion vector for all blocks
       
