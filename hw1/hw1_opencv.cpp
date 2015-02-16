@@ -10,10 +10,14 @@
 struct block
 {
 	cv::Mat subImg;
+	/*
 	int origin_x;
 	int origin_y;
 	int motion_x;
 	int motion_y;
+	*/
+	cv::Point2f original_pos;
+	cv::Point2f motion_pos;
 };
 
 double calculateDistance(const cv::Mat subImg, const cv::Mat testImg, const int blockSize)
@@ -80,8 +84,8 @@ int main(int argc, char *argv[])
 				}
 			}
 			b.subImg = tmpImg.clone();
-			b.origin_x = i*blockSize + blockSize/2;
-			b.origin_y = j*blockSize + blockSize/2;
+			b.original_pos.x = i*blockSize + blockSize/2;
+			b.original_pos.y = j*blockSize + blockSize/2;
 			blocks.push_back(b);
 		}
 	}
@@ -103,8 +107,8 @@ int main(int argc, char *argv[])
 	for(int index=0; index < blocks.size(); index++)
 	{
 		//get the center position of subImg in truckb
-		fatb_x = blocks[index].origin_x+searchRange-1;
-		fatb_y = blocks[index].origin_y+searchRange-1;
+		fatb_x = blocks[index].original_pos.x+searchRange-1;
+		fatb_y = blocks[index].original_pos.y+searchRange-1;
 
 		double distance = 1000000;
 		int halfRange = (searchRange-1)/2;
@@ -130,16 +134,30 @@ int main(int argc, char *argv[])
 				//Calculate the position that subImg mostly matches fatTruckb
 				if(calculateDistance(blocks[index].subImg, testImg, blockSize) < distance)
 				{
-					blocks[index].motion_x = searchX;
-					blocks[index].motion_y = searchY;
+					blocks[index].motion_pos.x = searchX-searchRange+1;
+					blocks[index].motion_pos.y = searchY-searchRange+1;
 				}
 			}
 		}
 	}	
 	
     //Calculate motion vector for all blocks
-      
-    //Draw motion vector field
+	for(int i=0; i<blocks.size(); i++)
+	{
+		//Draw original position(black)
+		cv::circle( truckb, blocks[i].original_pos, 3, cv::Scalar(0), -1, 8);
+		
+		//Draw Motion position(white)
+		cv::circle( truckb, blocks[i].motion_pos, 3, cv::Scalar(255), -1, 8);
+	
+	}	
 
+    //Draw motion vector field
+	for(int i=0; i<blocks.size(); i++)
+		cv::line( truckb, blocks[i].original_pos, blocks[i].motion_pos, cv::Scalar(255), 2, CV_AA, 0);
+	
+	cv::imshow("truckb with dot", truckb);
+	cv::waitKey();
+	
 	return 0;
 }
