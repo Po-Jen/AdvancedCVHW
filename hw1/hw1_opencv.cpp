@@ -25,13 +25,9 @@ double calculateDistance(const cv::Mat subImg, const cv::Mat testImg, const int 
 	double distance=0;
 
 	for(int i=0; i<blockSize; i++)
-	{
 		for(int j=0; j<blockSize; j++)
-		{
-			distance += std::abs((int)subImg.at<uchar>(i,j)-(int)testImg.at<uchar>(i,j));
-		}
-	}
-
+			distance += std::abs((int)subImg.at<uchar>(i,j)-(int)testImg.at<uchar>(i,j))
+			
 	return distance;
 }
 
