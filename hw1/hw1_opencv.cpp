@@ -26,9 +26,9 @@ double calculateDistance(const cv::Mat subImg, const cv::Mat testImg, const int 
 
 	for(int i=0; i<blockSize; i++)
 		for(int j=0; j<blockSize; j++)
-			distance += std::abs((int)subImg.at<uchar>(i,j)-(int)testImg.at<uchar>(i,j))
+			distance += std::abs((int)subImg.at<uchar>(i,j)-(int)testImg.at<uchar>(i,j));
 			
-	return distance;
+	return distance/blockSize;
 }
 
 int main(int argc, char *argv[])
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 	std::stringstream num;
 	for(int i=0; i<blocks.size(); i++)
 	{	
-		std::cout << blocks[i].origin_x << " " << blocks[i].origin_y << std::endl;
+		std::cout << blocks[i].original_pos.x << " " << blocks[i].original_pos.y << std::endl;
 		num << i;
 		cv::imshow(s+num.str(), blocks[i].subImg);
 	}
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 		//get the center position of subImg in truckb
 		fatb_x = blocks[index].original_pos.x+searchRange-1;
 		fatb_y = blocks[index].original_pos.y+searchRange-1;
-
+		
 		double distance = 1000000;
 		int halfRange = (searchRange-1)/2;
 
@@ -116,15 +116,19 @@ int main(int argc, char *argv[])
 				//Extract small area on fatTruckb for comparison
 				cv::Mat testImg = cv::Mat::zeros(blockSize, blockSize, CV_8U);
 				cv::Rect rect(searchX-(blockSize/2), searchY-(blockSize/2), blockSize, blockSize);
-				testImg = fatTruckb(rect);
+				testImg = fatTruckb(rect); //TO DEBUG
 
-#ifdef VISUALIZE	
-				std::string s="block";
-				std::stringstream num;
-				num << index;
-				cv::imshow(s+num.str(), blocks[index].subImg);
-				cv::imshow("testImg", testImg);
-				cv::waitKey();
+#ifdef VISUALIZE
+//#if 1
+				if(index == 6)
+				{	
+					std::string s="block";
+					std::stringstream num;
+					num << index;
+					cv::imshow(s+num.str(), blocks[index].subImg);
+					cv::imshow("testImg", testImg);
+					cv::waitKey();
+				}
 #endif
 
 				//Calculate the position that subImg mostly matches fatTruckb
@@ -145,12 +149,11 @@ int main(int argc, char *argv[])
 		
 		//Draw Motion position(white)
 		cv::circle( truckb, blocks[i].motion_pos, 3, cv::Scalar(255), -1, 8);
-	
 	}	
 
     //Draw motion vector field
 	for(int i=0; i<blocks.size(); i++)
-		cv::line( truckb, blocks[i].original_pos, blocks[i].motion_pos, cv::Scalar(255), 2, CV_AA, 0);
+		cv::line( truckb, blocks[i].original_pos, blocks[i].motion_pos, cv::Scalar(255), 1, CV_AA, 0);
 	
 	cv::imshow("truckb with dot", truckb);
 	cv::waitKey();
