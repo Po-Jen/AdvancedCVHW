@@ -21,3 +21,6 @@
 ##HW 3
   *Optical Flow*
 
+1. Implement Horn&Schunck optical flow algorithm
+2. Test data: manually shift lena 1 pixel right and downward 
+3. Try lambda of 0.1, 1, 10
