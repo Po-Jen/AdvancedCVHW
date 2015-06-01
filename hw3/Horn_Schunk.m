@@ -1,5 +1,5 @@
-function [ ] = Lucas_Kanade( imgFirst, imgAfter )
-%LUCAS_KANADE Summary of this function goes here
+function [ ] = Horn_Schunk( imgFirst, imgAfter )
+%HORN_SCHUNK Summary of this function goes here
 
 %Compute Ex, Ey, Et first
 Ex = conv2(imgFirst, 0.25*[-1 1; -1 1], 'same') + conv2(imgAfter, 0.25*[-1 1; -1 1], 'same');
